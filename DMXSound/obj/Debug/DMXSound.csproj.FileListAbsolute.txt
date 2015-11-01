@@ -1,0 +1,11 @@
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\bin\Debug\DMXSound.exe.config
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\bin\Debug\DMXSound.exe
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\bin\Debug\DMXSound.pdb
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\bin\Debug\NAudio.dll
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\bin\Debug\NAudio.xml
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.csprojResolveAssemblyReference.cache
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.Form1.resources
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.Properties.Resources.resources
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.csproj.GenerateResource.Cache
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.exe
+C:\Users\2425\Documents\GitHub\DMXSound\DMXSound\obj\Debug\DMXSound.pdb
