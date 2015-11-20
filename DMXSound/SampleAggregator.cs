@@ -19,7 +19,9 @@ namespace DMXSound
         public event EventHandler<FftEventArgs> FftCalculated;
         public bool PerformFFT { get; set; }
         private Complex[] fftBuffer;
+        private Queue<Complex> fftBufferQueue;
         private FftEventArgs fftArgs;
+        private bool bffFull;
         private int fftPos;
         private int fftLength;
         private int m;
@@ -34,6 +36,8 @@ namespace DMXSound
             this.fftLength = fftLength;
             this.fftBuffer = new Complex[fftLength];
             this.fftArgs = new FftEventArgs(fftBuffer);
+            this.fftBufferQueue = new Queue<Complex>(fftLength);
+            this.bffFull = false;
         }
 
         bool IsPowerOfTwo(int x)
@@ -52,16 +56,20 @@ namespace DMXSound
         {
             if (PerformFFT && FftCalculated != null)
             {
-                fftBuffer[fftPos].X = (float)(value * FastFourierTransform.HammingWindow(fftPos, fftBuffer.Length));
-                fftBuffer[fftPos].Y = 0;
-                fftPos++;
-                if (fftPos >= fftBuffer.Length)
-                {
-                    fftPos = 0;
-                    // 1024 = 2^10
+                Complex tempcomplex;
+                tempcomplex.X = (float)(value * FastFourierTransform.HammingWindow(fftPos, fftBuffer.Length));
+                tempcomplex.Y = 0;
+                fftBufferQueue.Enqueue(tempcomplex);
+               // fftBuffer[fftPos].X = (float)(value * FastFourierTransform.HammingWindow(fftPos, fftBuffer.Length));
+               // fftBuffer[fftPos].Y = 0;
+                if (fftPos < fftBuffer.Length) { 
+                    fftPos++;
+                }else{
+                    fftBuffer = fftBufferQueue.ToArray();
                     FastFourierTransform.FFT(true, m, fftBuffer);
                     FftCalculated(this, fftArgs);
-                }
+                    fftBufferQueue.Dequeue();
+               }
             }
 
             maxValue = Math.Max(maxValue, value);

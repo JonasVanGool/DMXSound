@@ -13,8 +13,15 @@ namespace DMXSound
 {
     public partial class Form1 : Form
     {
-        private static int fftLength = 1024; // NAudio fft wants powers of two!
+        private static int fftLength = 128; // NAudio fft wants powers of two!
+        private static string channel1 = "Left Channel";
+        private static string channel2 = "Right Channel";
+        private static string fft = "FFT";
+        private static string sumFreq1series = "Sum freq 1";
+        private static string sumFreq2series = "Sum freq 2";
+        private static string sumFreq3series = "Sum freq 3";
         private long counter = 0;
+        private long counter2 = 0;
 
         // There might be a sample aggregator in NAudio somewhere but I made a variation for my needs
         private SampleAggregator sampleAggregator = new SampleAggregator(fftLength);
@@ -24,6 +31,7 @@ namespace DMXSound
         public Form1()
         {
             InitializeComponent();
+            
 
             sampleAggregator.FftCalculated += new EventHandler<FftEventArgs>(FftCalculated);
             sampleAggregator.PerformFFT = true;
@@ -69,12 +77,12 @@ namespace DMXSound
                         sampleR = sampleR - 65536;
 
                     sampleAggregator.Add(sampleL);
-                    chart1.Series["Series1"].Points.AddY(sampleL);
-                    chart2.Series["Series1"].Points.AddY(sampleR);
+                    LeftChannelChart.Series[channel1].Points.AddY(sampleL);
+                    RightChannelChart.Series[channel2].Points.AddY(sampleR);
                     if (counter > 1023)
                     {
-                        chart1.Series["Series1"].Points.Remove(chart1.Series["Series1"].Points.First());
-                        chart2.Series["Series1"].Points.Remove(chart2.Series["Series1"].Points.First());
+                        LeftChannelChart.Series[channel1].Points.Remove(LeftChannelChart.Series[channel1].Points.First());
+                        RightChannelChart.Series[channel2].Points.Remove(RightChannelChart.Series[channel2].Points.First());
                     }
                     else
                     {
@@ -86,11 +94,40 @@ namespace DMXSound
 
         void FftCalculated(object sender, FftEventArgs e)
         {
-            chart3.Series["Series1"].Points.Clear();
+            double sumFreq1 = 0;
+            double sumFreq2 = 0;
+            double sumFreq3 = 0;
+            double temp = 0;
+            FftChart.Series[fft].Points.Clear();
             for (var i = 0; i < e.Result.Length/2; i++)
             {
-               chart3.Series["Series1"].Points.AddY(Math.Sqrt(e.Result[i].X * e.Result[i].X + e.Result[i].Y * e.Result[i].Y));
+                temp = Math.Sqrt(e.Result[i].X * e.Result[i].X + e.Result[i].Y * e.Result[i].Y);
+                if (i < 3)
+                {
+                    sumFreq1 = sumFreq1 + temp;
+                }else if(i<10){
+                    sumFreq2 = sumFreq2 + temp;
+                }
+                else
+                {
+                    sumFreq3 = sumFreq3 + temp;
+                }
+
+                FftChart.Series[fft].Points.AddY(temp);
             }
+            if (counter2 > 100)
+            {
+                SumFreq1Chart.Series[sumFreq1series].Points.Remove(SumFreq1Chart.Series[sumFreq1series].Points.First());
+                SumFreq2Chart.Series[sumFreq2series].Points.Remove(SumFreq2Chart.Series[sumFreq2series].Points.First());
+                SumFreq3Chart.Series[sumFreq3series].Points.Remove(SumFreq3Chart.Series[sumFreq3series].Points.First());
+            }
+            else
+            {
+                counter2++;
+            }
+            SumFreq1Chart.Series[sumFreq1series].Points.AddY(sumFreq1);
+            SumFreq2Chart.Series[sumFreq2series].Points.AddY(sumFreq2);
+            SumFreq3Chart.Series[sumFreq3series].Points.AddY(sumFreq3);
         }
     }
 }
